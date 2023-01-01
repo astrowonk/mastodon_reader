@@ -141,8 +141,7 @@ def update_final_token(data, tokens, access_token):
     m = Mastodon(api_base_url=api_base_url,
                  client_id=decode(tokens['client_id']),
                  client_secret=decode(tokens['client_secret']))
-    token = m.log_in("marcoshuerta@vmst.io",
-                     code=decode(data['code']),
+    token = m.log_in(code=decode(data['code']),
                      redirect_uri=redirect_uri,
                      scopes=['read'])
     return ({'access_token': encode(token)})
