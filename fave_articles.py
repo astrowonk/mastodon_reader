@@ -67,12 +67,18 @@ def process_posts(posts):
 
 
 def make_icon(row):
-    out = []
     if row['favorite']:
-        return html.I(className="bi bi-star-fill", style={'float': 'right'})
+        return html.I(className="bi bi-star-fill",
+                      style={
+                          'float': 'right',
+                          'display': 'inline-block'
+                      })
     elif row['bookmark']:
         return html.I(className="bi bi-bookmark-fill",
-                      style={'float': 'right'})
+                      style={
+                          'float': 'right',
+                          'display': 'inline-block'
+                      })
 
 
 def make_card(row, host):
@@ -83,14 +89,16 @@ def make_card(row, host):
         desc = row['description']
     current_tz = datetime.datetime.now().astimezone().tzinfo
     mydate = datetime.datetime.fromisoformat(
-        row['date']).astimezone(current_tz).strftime("%b %-d, %Y %-I:%M:%p")
+        row['date']).astimezone(current_tz).strftime("%b %-d, %Y %-I:%M%p")
 
     card_content = [
         dbc.CardHeader([
-            dcc.Markdown(
-                f"via [{row['account']}]({myurl}) - *{row['display_name']}*"),
-            make_icon(row),
-            html.P(mydate, className="card-text"),
+            html.Div([
+                dcc.Markdown(
+                    f"{mydate}, via [{row['account']}]({myurl}) - *{row['display_name']}*",
+                    style={'display': 'inline-block'}),
+                make_icon(row)
+            ], )
         ]),
         dbc.CardBody([
             html.H5(row['title'], className="card-title"),
