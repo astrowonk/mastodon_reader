@@ -63,6 +63,7 @@ def parse_access_code(search, tokens, auth_code, access_token):
     """When bouncing back from the instance with the code in the URL, pull out the code and store it."""
     if access_token:
         raise PreventUpdate
+    no_auth_url = request.host_url + url_base_path_name[1:]
     if not search or not search.startswith(
             '?code') or not tokens or not tokens.get(
                 'instance_name') or auth_code:
@@ -71,7 +72,12 @@ def parse_access_code(search, tokens, auth_code, access_token):
     return {'code': encode(code)}
 
 
-@app.callback(Output('tokens', 'data'),
+@app.callback([
+    Output('tokens', 'data'),
+    Output('auth-code', 'clear_data'),
+    Output('access-token', 'clear_data'),
+    Output('article-cache', 'clear_data')
+],
               Input('button', 'n_clicks'),
               State('instance-name', 'value'),
               prevent_initial_call=True)
@@ -86,12 +92,11 @@ def get_token(_, instance_name):
         redirect_uris=redirect_uri,
         api_base_url=f'https://{instance_name}')
 
-    tokens = {'client_secret': client_secret, 'client_id': client_id}
     return {
         'client_secret': encode(client_secret),
         'client_id': encode(client_id),
         'instance_name': instance_name
-    }
+    }, True, True, True
 
 
 @app.callback(Output('location', 'href'),
@@ -102,17 +107,17 @@ def get_token(_, instance_name):
               State('auth-code', 'data'),
               State('access-token', 'data'),
               prevent_initial_call=True)
-def update_location(location, ts, data, instance_name, auth_code,
+def update_location(location, ts, tokens_data, instance_name, auth_code,
                     access_token):
     """Creates and redirects to the authentication url of the mastodon instance"""
     if ('auth' in
             location  #have to check for auth in the url otherwise because this callback fires 
             #at the same time as the auth_token getting set and the other conditionals won't be met
-        ) or access_token or auth_code or not data or not instance_name:
+        ) or access_token or auth_code or not tokens_data or not instance_name:
         raise PreventUpdate
 
-    m = Mastodon(client_id=decode(data['client_id']),
-                 client_secret=decode(data['client_secret']),
+    m = Mastodon(client_id=decode(tokens_data['client_id']),
+                 client_secret=decode(tokens_data['client_secret']),
                  api_base_url=f'https://{instance_name}')
 
     redirect_uri = request.host_url + url_base_path_name[1:] + 'auth'
