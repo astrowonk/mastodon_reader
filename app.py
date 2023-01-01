@@ -42,6 +42,7 @@ app.layout = dbc.Container([
               placeholder='Mastodon instance, e.g. mastodon.social',
               style={'width': '80%'}),
     html.Div(id='authorize-div'),
+    dbc.Spinner(html.Div(id='fs-spinner', style={'margin': 'auto'})),
     html.H3(
         "Links from Mastodon Favorites and Bookmarks",
         style=STYLE_BANNER,
@@ -140,10 +141,16 @@ def update_final_token(data, tokens, access_token):
     return ({'access_token': encode(token)})
 
 
-@app.callback(Output('article-cache', 'data'), Input('access-token', 'data'),
-              State('tokens', 'data'),
-              State('article-cache', 'modified_timestamp'),
-              State('article-cache', 'data'))
+@app.callback(
+    output=[Output('article-cache', 'data'),
+            Output('fs-spinner', 'children')],
+    inputs=[
+        Input('access-token', 'data'),
+        State('tokens', 'data'),
+        State('article-cache', 'modified_timestamp'),
+        State('article-cache', 'data')
+    ],
+)
 def update_data(access_token, tokens, ts, cached_data):
     """Loads data from the mastodon api into local storage using the access token"""
     if not access_token:
@@ -175,7 +182,7 @@ def update_data(access_token, tokens, ts, cached_data):
     print("max ids")
     print(max_favorite_id, max_bookmark_id)
     print()
-    return mydata
+    return mydata, ' '
 
 
 @app.callback(Output('output', 'children'), Input('article-cache', 'data'),
