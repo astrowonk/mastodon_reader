@@ -7,8 +7,9 @@ It is very much a work in progress but it works.
 
 TODO:
 
-  * Hide/Show the Login/Authorize interface
+  ~~* Hide/Show the Login/Authorize interface~~
   * Add manual refresh button
   * Limit lookback window by time (i.e. only 30 days, rather than 40 posts)
   * Setting for how far back / how many bookmarks/faves to use.
   * Include boosts as an option?
+  * Better CSS and layout
