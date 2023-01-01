@@ -9,6 +9,7 @@ from urllib.parse import parse_qs
 from encryption import encode, decode
 import datetime
 from fave_articles import make_card, get_processed_data
+from time import sleep
 
 from pathlib import Path
 
@@ -48,7 +49,7 @@ app.layout = dbc.Container([
         style=STYLE_BANNER,
     ),
     dbc.Spinner(html.Div(id='output')),
-    dcc.Location(id='location', refresh=True),
+    dcc.Location(id='location', refresh=False),
     dcc.Store(id='auth-code', storage_type='local'),
     dcc.Store(id='tokens', storage_type='local'),
     dcc.Store(id='access-token', storage_type='local'),
@@ -99,7 +100,8 @@ def get_token(_, instance_name):
     }, True, True, True
 
 
-@app.callback(Output('location', 'href'),
+@app.callback([Output('location', 'refresh'),
+               Output('location', 'href')],
               State('location', 'href'),
               Input('tokens', 'modified_timestamp'),
               State('tokens', 'data'),
@@ -114,7 +116,8 @@ def update_location(location, ts, tokens_data, instance_name, auth_code,
             location  #have to check for auth in the url otherwise because this callback fires 
             #at the same time as the auth_token getting set and the other conditionals won't be met
         ) or access_token or auth_code or not tokens_data or not instance_name:
-        raise PreventUpdate
+        sleep(1)
+        return False, request.host_url + url_base_path_name[1:]
 
     m = Mastodon(client_id=decode(tokens_data['client_id']),
                  client_secret=decode(tokens_data['client_secret']),
@@ -123,7 +126,7 @@ def update_location(location, ts, tokens_data, instance_name, auth_code,
     redirect_uri = request.host_url + url_base_path_name[1:] + 'auth'
 
     url = m.auth_request_url(redirect_uris=redirect_uri, scopes=['read'])
-    return url
+    return True, url
 
 
 @app.callback(Output('access-token', 'data'), Input('auth-code', 'data'),
