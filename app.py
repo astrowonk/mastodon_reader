@@ -120,7 +120,6 @@ def get_token(click_authorize, click_logout, instance_name):
     if click_authorize and not instance_name:
         raise PreventUpdate
     clicked_button = callback_context.triggered[0]['prop_id'].split('.')[0]
-    print(clicked_button)
     if clicked_button == 'logout-button':
         return None, True, True, True
     redirect_uri = request.host_url + url_base_path_name[1:] + 'auth'

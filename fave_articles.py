@@ -29,7 +29,6 @@ def get_posts(mastodon,
 
     posts = favorites + bookmarks
     print(f"Retrieved {len(posts)} new posts.")
-    print(get_min_id(favorites), get_min_id(bookmarks))
     return {
         'fave_id_pagination': get_min_id(favorites) or min_fave_id,
         'bookmark_id_pagination': get_min_id(bookmarks) or min_bookmark_id,
