@@ -30,7 +30,7 @@ app = Dash(
     url_base_pathname=url_base_path_name,
     title="Mastodon Link List",
 )
-
+server = app.server
 button_class = 'me-1'
 
 app.layout = dbc.Container([
