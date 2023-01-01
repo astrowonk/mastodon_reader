@@ -80,7 +80,6 @@ def get_token(_, instance_name):
     if not instance_name:
         raise PreventUpdate
     redirect_uri = request.host_url + url_base_path_name[1:] + 'auth'
-    print(redirect_uri)
     client_id, client_secret = Mastodon.create_app(
         'mastodon-link-reader',
         scopes=['read'],
@@ -179,9 +178,6 @@ def update_data(access_token, tokens, ts, cached_data):
 
     if cached_data:
         mydata['posts'] = mydata['posts'] + cached_data['posts']
-    print("max ids")
-    print(max_favorite_id, max_bookmark_id)
-    print()
     return mydata, ' '
 
 
