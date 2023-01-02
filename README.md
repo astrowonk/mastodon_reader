@@ -5,8 +5,6 @@ This Dash web app uses the Mastodon API to scan your bookmarks and favorites for
 
 It should successfully redirect to your instance and back with an `access_token`. All tokens/codes etc are stored in browser local storage but encrypted with [Fernet](https://cryptography.io/en/latest/fernet/) so no other site should be able to do much with them should they somehow access the local storage values. It requests only read-only access.
 
-It is very much a work in progress but it works.
-
 TODO:
 
   ~~* Hide/Show the Login/Authorize interface~~
