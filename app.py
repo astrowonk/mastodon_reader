@@ -25,6 +25,9 @@ STYLE_BANNER = {
     'text-align': 'center',
 }
 
+with open("about.md", "r") as myfile:
+    about_markdown = myfile.read()
+
 app = Dash(__name__,
            external_stylesheets=[dbc.themes.COSMO, dbc.icons.BOOTSTRAP],
            url_base_pathname=url_base_path_name,
@@ -33,11 +36,8 @@ app = Dash(__name__,
 server = app.server
 button_class = 'me-1'
 
-app.layout = dbc.Container([
+main_tab = dbc.Tab([
     dbc.Spinner(html.Div(id='fs-spinner', style={'margin': 'auto'})),
-    dcc.Markdown(
-        "Source code on [github.](https://github.com/astrowonk/mastodon_reader). FAQ / About Tab forthcoming."
-    ),
     html.Div(id='authorization-div', hidden=False),
     dbc.Spinner(html.Div(id='output')),
     dcc.Location(id='location', refresh=False),
@@ -45,7 +45,21 @@ app.layout = dbc.Container([
     dcc.Store(id='tokens', storage_type='local'),
     dcc.Store(id='access-token', storage_type='local'),
     dcc.Store(id='article-cache', storage_type='local'),
-])
+],
+                   label="Reader",
+                   tab_id='reader-tab')
+
+settings_tab = dbc.Tab(label="Settings", style=STYLE)
+about_tab = dbc.Tab(dcc.Markdown(about_markdown), label="About", style=STYLE)
+
+app.layout = dbc.Container(
+    dbc.Tabs(
+        [
+            main_tab,
+            # settings_tab,
+            about_tab,
+        ],
+        active_tab='reader-tab'))
 
 
 @app.callback(Output('authorization-div', 'children'),
