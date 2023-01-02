@@ -35,6 +35,9 @@ button_class = 'me-1'
 
 app.layout = dbc.Container([
     dbc.Spinner(html.Div(id='fs-spinner', style={'margin': 'auto'})),
+    dcc.Markdown(
+        "Source code on [github.](https://github.com/astrowonk/mastodon_reader). FAQ / About Tab forthcoming."
+    ),
     html.Div(id='authorization-div', hidden=False),
     dbc.Spinner(html.Div(id='output')),
     dcc.Location(id='location', refresh=False),
