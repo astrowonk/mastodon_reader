@@ -10,6 +10,7 @@ from encryption import encode, decode
 import datetime
 from fave_articles import make_card, get_processed_data
 from time import sleep
+import pandas as pd
 
 from pathlib import Path
 
@@ -253,6 +254,8 @@ def update_data(access_token, tokens, ts, cached_data):
 
     if cached_data:
         mydata['posts'] = mydata['posts'] + cached_data['posts']
+    df = pd.DataFrame(mydata['posts'])
+    mydata['posts'] = df.drop_duplicates(subset=['url']).to_dict('records')
     return mydata, ' '
 
 
