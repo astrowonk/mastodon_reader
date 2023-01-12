@@ -232,8 +232,9 @@ def update_data(access_token, tokens, ts, cached_data):
         raise PreventUpdate
     if ts != -1:
         ts = datetime.datetime.fromtimestamp(ts / 1000.0)
-    if (ts != -1
-        ) and datetime.datetime.now() < (ts + datetime.timedelta(minutes=5)):
+    else:
+        ts = datetime.datetime(1999,1,1)
+    if datetime.datetime.now() < (ts + datetime.timedelta(minutes=5)):
         print("Using cached data, not loading."
               )  # need to add a manual refresh button
         raise PreventUpdate
