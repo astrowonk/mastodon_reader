@@ -233,7 +233,7 @@ def update_data(access_token, tokens, ts, cached_data):
     if ts != -1:
         ts = datetime.datetime.fromtimestamp(ts / 1000.0)
     else:
-        ts = datetime.datetime(1999,1,1)
+        ts = datetime.datetime(1999, 1, 1)
     if datetime.datetime.now() < (ts + datetime.timedelta(minutes=5)):
         print("Using cached data, not loading."
               )  # need to add a manual refresh button
@@ -255,6 +255,8 @@ def update_data(access_token, tokens, ts, cached_data):
 
     if cached_data:
         mydata['posts'] = mydata['posts'] + cached_data['posts']
+        mydata['posts'] = mydata['posts'].head(
+            80)  ## keep just most recent 80... I think this is a good idea?
     df = pd.DataFrame(mydata['posts'])
     mydata['posts'] = df.drop_duplicates(subset=['url']).to_dict('records')
     return mydata, ' '
