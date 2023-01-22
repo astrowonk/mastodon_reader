@@ -255,8 +255,9 @@ def update_data(access_token, tokens, ts, cached_data):
 
     if cached_data:
         mydata['posts'] = mydata['posts'] + cached_data['posts']
-        mydata['posts'] = mydata['posts'].head(
-            80)  ## keep just most recent 80... I think this is a good idea?
+        mydata['posts'] = mydata[
+            'posts'][:
+                     80]  ## keep just most recent 80... I think this is a good idea?
     df = pd.DataFrame(mydata['posts'])
     mydata['posts'] = df.drop_duplicates(subset=['url']).to_dict('records')
     return mydata, ' '
