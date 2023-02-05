@@ -246,8 +246,6 @@ def update_data(access_token, tokens, ts, cached_data):
 
     api_base_url = f"https://{tokens['instance_name']}"
     m = Mastodon(api_base_url=api_base_url,
-                 client_id=tokens['client_id'],
-                 client_secret=tokens['client_secret'],
                  access_token=decode(access_token['access_token']))
     mydata = get_processed_data(m,
                                 min_fave_id=max_favorite_id,
