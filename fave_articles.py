@@ -12,22 +12,26 @@ def get_min_id(next_page):
 
 
 def get_posts(mastodon,
-              fave_limit=40,
-              bookmark_limit=40,
+              fave_limit=30,
+              bookmark_limit=30,
               min_fave_id=None,
               min_bookmark_id=None):
     print('retrieving data from mastodon api')
 
-    if not min_fave_id:
-        favorites = mastodon.favourites(limit=fave_limit)
-    else:
-        favorites = mastodon.favourites(min_id=min_fave_id)
-    if not min_bookmark_id:
-        bookmarks = mastodon.bookmarks(limit=bookmark_limit)
-    else:
-        bookmarks = mastodon.bookmarks(min_id=min_bookmark_id)
+    favorites = mastodon.favourites(limit=fave_limit)
+    favorites = favorites + mastodon.fetch_next(favorites)
+    print("last fave")
+    print(favorites[-1]['created_at'])
+
+    bookmarks = mastodon.bookmarks(limit=bookmark_limit)
+    bookmarks = bookmarks + mastodon.fetch_next(bookmarks)
+    print("last bookmark")
+    print(bookmarks[-1]['created_at'])
 
     posts = favorites + bookmarks
+    posts = sorted(posts, key=lambda x: x['created_at'], reverse=True)
+    print("last post")
+    print(posts[-1]['created_at'])
     print(f"Retrieved {len(posts)} new posts.")
     return {
         'fave_id_pagination': get_min_id(favorites) or min_fave_id,
